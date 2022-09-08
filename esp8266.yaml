@@ -1,0 +1,63 @@
+substitutions:
+  device_name: sonoff-basic
+  device_description: "Sonoff basic switch"
+    
+esphome:
+  name: ${device_name}
+  comment: "${device_description}"
+  platform: ESP8266
+  esp8266_restore_from_flash: true
+  board: esp8285
+  name_add_mac_suffix: true
+  project:
+    name: esphome.sonoff-basic
+    version: "1.0"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+
+captive_portal:
+
+# Enable logging
+#logger:
+
+ota:
+
+web_server:
+  port: 80
+  
+#mqtt:
+#  broker: 192.168.200.41
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Sonoff Basic Button"
+    on_press:
+      - switch.toggle: relay
+
+switch:
+  - platform: gpio
+    name: "Sonoff Basic Relay"
+    pin: GPIO12
+    id: relay
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
+
+sensor:
+  - platform: uptime
+    name: ${device_name}_Uptime_s
+    id: uptime_sensor
+    update_interval: 15s
